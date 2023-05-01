@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Find the Ambystoma! </title>
+	<style>
+		canvas {
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="game-canvas" width="1425" height="1280", style="position:absolute; top:0px; left:0px"></canvas>
+	<canvas hidden="hidden" id="hidden-canvas" width="1425" height="1280", style="position:absolute; top:0px; left:0px"></canvas>
+
+	<script>
+		// Initialize canvas
+		// Hidden canvas overlaps with the normal rendering canvas
+		var canvas = document.getElementById("game-canvas");
+		var ctx = canvas.getContext("2d");
+		var hidden_canvas = document.getElementById("hidden-canvas");
+		var hidden_ctx = hidden_canvas.getContext("2d");
+		var ended = false;
+
+		// Define objects
+		var transparent_background = {image: new Image(), zIndex: 1, source: 'assets/transparent_background.jpg'};
+		var solid_background = {image: new Image(), zIndex: 1, source: 'assets/background.jpg'};
+		var ambystoma_1 = {image: new Image(), zIndex: 2, source: 'assets/ambystoma1.png', x: 593, y: 469};
+		var ambystoma_2 = {image: new Image(), zIndex: 2, source: 'assets/ambystoma2.png', x: 515, y: 732};
+		var ambystoma_3 = {image: new Image(), zIndex: 2, source: 'assets/ambystoma3.png', x: 811, y: 1035};
+		var ambystoma_4 = {image: new Image(), zIndex: 2, source: 'assets/ambystoma4.png', x: 513, y: 1067};
+		all_ambystoma = [ambystoma_1, ambystoma_2, ambystoma_3, ambystoma_4];
+		all_objects = [transparent_background, solid_background];
+		all_objects = all_objects.concat(all_ambystoma);
+		found_ambystoma = [];
+
+		// Initialize objects' sources
+		for (var i = 0; i < all_objects.length; i++) {
+			all_objects[i].image.src = all_objects[i].source;
+			all_objects[i].image.crossOrigin = "anonymous";
+		} 
+
+		// Define what to draw
+		objectsToDraw = [transparent_background];
+
+		// Intial: Draw objects
+		function draw_objects(objectsToDraw, ctx) {
+			objectsToDraw.sort(function(a, b) {
+  				return a.zIndex - b.zIndex;
+			});
+			// draw the objects in order
+			for (var i = 0; i < objectsToDraw.length; i++) {
+  				ctx.drawImage(objectsToDraw[i].image, 0, 0);
+			}
+		}
+
+		// Typical draw
+		function draw() {
+			draw_objects(objectsToDraw, ctx);
+		}
+
+		// Initial draw. This will be called after the images are loaded.
+		document.addEventListener('readystatechange', function() {
+			draw();
+			// Hidden layer will only be called once
+			draw_objects(all_ambystoma, hidden_ctx);
+		}, false);
+
+		// Note this is not distance, this is square of distance
+		function compute_dist(x,y,ax,ay) {
+			return Math.pow(x-ax,2) + Math.pow(y-ay,2);
+		}
+
+		function initialize() {
+			found_ambystoma = [];
+			objectsToDraw = [transparent_background];
+			draw();
+			ended = false;
+		}
+
+		function end() {
+			objectsToDraw = [solid_background];
+			draw();
+			ended = true;
+		}
+
+		// Listen on normal canvas, and transfer the event to hidden canvas
+		canvas.addEventListener("click", function(event) {
+				var x = event.offsetX;
+				var y = event.offsetY;
+				var copied_click = new MouseEvent(
+					"click",
+					{
+						clientX: event.offsetX,
+						clientY: event.offsetY,
+						bubbles: true
+					}
+				)
+				
+				hidden_canvas.dispatchEvent(copied_click);
+			}
+		)
+
+		// Check if the clicked pixel is transparent. 
+		// If actually clicked on object, check which object it is.
+		// If object is not yet shown, show it.
+		// Change to show the complete image when there object is clicked.
+		hidden_canvas.addEventListener("click", function(event) {
+				if (ended) {
+					initialize();
+					return;
+				}
+
+				var x = event.offsetX;
+				var y = event.offsetY;
+				
+				var pixelData = hidden_ctx.getImageData(x, y, 1, 1).data;
+				console.log(x,y); 
+
+    			// If transparency on the pixel , array = [0,0,0,0]
+    			if((pixelData[0] == 0) && (pixelData[1] == 0) && (pixelData[2] == 0) && (pixelData[3] == 0)){
+        			console.log("Did not click on ambystoma!");
+				} else {
+					// Find closest ambystoma
+					var closest_ambystoma = null;
+					var min_dist = Number.MAX_SAFE_INTEGER;
+					for (var i in all_ambystoma) {
+						var ax = all_ambystoma[i].x;
+						var ay = all_ambystoma[i].y;
+						var dist = compute_dist(x,y,ax,ay);
+						if (dist < min_dist) {
+							closest_ambystoma = all_ambystoma[i];
+							min_dist = dist;
+						}
+					}
+					if (!found_ambystoma.includes(closest_ambystoma)) {
+						found_ambystoma.push(closest_ambystoma);
+						objectsToDraw.push(closest_ambystoma);
+						console.log("Found ambystoma!")
+						// Check if game finishes
+						if (found_ambystoma.length == all_ambystoma.length) {
+							end();
+						} else {
+							// Update display
+							draw();
+						}
+					} else {
+						console.log("Found but duplicate!")
+					}
+				}
+			}
+		)
+
+	</script>
+</body>
+</html>
