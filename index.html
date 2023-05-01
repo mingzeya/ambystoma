@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Find the Ambystoma! </title>
+	<title>Find all Ambystoma! </title>
 	<style>
 		canvas {
 			border: 1px solid black;
@@ -9,6 +9,7 @@
 	</style>
 </head>
 <body>
+	<meta charset="UTF-8">
 	<canvas id="game-canvas" width="1425" height="1280", style="position:absolute; top:0px; left:0px"></canvas>
 	<canvas hidden="hidden" id="hidden-canvas" width="1425" height="1280", style="position:absolute; top:0px; left:0px"></canvas>
 
@@ -65,6 +66,9 @@
 		// Typical draw
 		function draw() {
 			draw_objects(objectsToDraw, ctx);
+			// Display score
+			ctx.font = "70px fantasy";
+			ctx.fillText(found_ambystoma.length+"/25", 60, 110);
 		}
 
 		// Initial draw. This will be called after the images are loaded.
