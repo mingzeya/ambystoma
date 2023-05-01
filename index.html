@@ -25,7 +25,7 @@
 		// Define objects
 		var transparent_background = {image: new Image(), zIndex: 1, source: 'assets/transparent_background.jpg'};
 		var solid_background = {image: new Image(), zIndex: 1, source: 'assets/background.jpg'};
-		var ambystoma_1 = {image: new Image(), zIndex: 2, source: 'assets/ambystoma1.png', x: 593, y: 469};
+		var ambystoma_1 = {image: new Image(), zIndex: 2, source: 'assets/ambystoma1.png', x: 632, y: 471};
 		var ambystoma_2 = {image: new Image(), zIndex: 2, source: 'assets/ambystoma2.png', x: 515, y: 732};
 		var ambystoma_3 = {image: new Image(), zIndex: 2, source: 'assets/ambystoma3.png', x: 811, y: 1035};
 		var ambystoma_4 = {image: new Image(), zIndex: 2, source: 'assets/ambystoma4.png', x: 513, y: 1067};
@@ -36,9 +36,26 @@
 		var ambystoma_9 = {image: new Image(), zIndex: 2, source: 'assets/ambystoma9.png', x: 914, y: 797};
 		var ambystoma_10 = {image: new Image(), zIndex: 2, source: 'assets/ambystoma10.png', x: 662, y: 425};
 		var ambystoma_11 = {image: new Image(), zIndex: 2, source: 'assets/ambystoma11.png', x: 1057, y: 196};
+		var ambystoma_12 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan1.png', x: 296, y: 349};
+		var ambystoma_13 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan2.png', x: 294, y: 530};
+		var ambystoma_14 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan3.png', x: 242, y: 422};
+		var ambystoma_15 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan4.png', x: 224, y: 299};
+		var ambystoma_16 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan5.png', x: 548, y: 461};
+		var ambystoma_17 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan6.png', x: 251, y: 739};
+		var ambystoma_18 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan7.png', x: 294, y: 788};
+		var ambystoma_19 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan8.png', x: 489, y: 687};
+		var ambystoma_20 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan9.png', x: 598, y: 731};
+		var ambystoma_21 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan10.png', x: 1290, y: 509};
+		var ambystoma_22 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan11.png', x: 982, y: 154};
+		var ambystoma_23 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan12.png', x: 598, y: 184};
+		var ambystoma_24 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan13.png', x: 777, y: 397};
+		var ambystoma_25 = {image: new Image(), zIndex: 2, source: 'assets/dunkouyuan14.png', x: 278, y: 875};
 		all_ambystoma = [ambystoma_1, ambystoma_2, ambystoma_3, ambystoma_4, 
-			ambystoma_5, ambystoma_6, ambystoma_7, ambystoma_8,
-			ambystoma_9, ambystoma_10, ambystoma_11];
+			ambystoma_5, ambystoma_6, ambystoma_7, ambystoma_8, ambystoma_9, 
+			ambystoma_10, ambystoma_11, ambystoma_12, ambystoma_13,
+			ambystoma_14, ambystoma_15, ambystoma_16, ambystoma_17,
+			ambystoma_18, ambystoma_19, ambystoma_20, ambystoma_21,
+			ambystoma_22, ambystoma_23, ambystoma_24, ambystoma_25];
 		all_objects = [transparent_background, solid_background];
 		all_objects = all_objects.concat(all_ambystoma);
 		found_ambystoma = [];
@@ -67,7 +84,7 @@
 		function draw() {
 			draw_objects(objectsToDraw, ctx);
 			// Display score
-			ctx.font = "70px fantasy";
+			ctx.font = "70px cursive";
 			ctx.fillText(found_ambystoma.length+"/25", 60, 110);
 		}
 
