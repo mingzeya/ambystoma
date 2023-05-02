@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
+<audio id="bgm"><source src="sounds/gold_saucer.mp3" type="audio/mpeg"></audio>
+<audio id="complete"><source src="sounds/complete.mp3" type="audio/mpeg"></audio>
 <audio id="found"><source src="sounds/found.wav" type="audio/mpeg"></audio>
 <audio id="duplicate"><source src="sounds/duplicate.wav" type="audio/mpeg"></audio>
 <audio id="misclick"><source src="sounds/feiwu.wav" type="audio/mpeg"></audio>
-<audio id="end"><source src="sounds/xisilade.wav" type="audio/mpeg"></audio>
 
 <head>
 	<title>Find all Ambystoma! </title>
@@ -29,6 +30,7 @@
 		// To prevent game reset immediately, define a click counter of reset
 		var END_COUNT = 3;
 		var end_counter = END_COUNT;
+		var bgm_play = false;
 
 		// Define objects
 		var transparent_background = {image: new Image(), zIndex: 1, source: 'assets/transparent_background.jpg'};
@@ -114,17 +116,30 @@
 			draw();
 			ended = false;
 			end_counter = END_COUNT;
+			playSound("bgm", 0.1);
 		}
 
 		function end() {
 			objectsToDraw = [solid_background];
 			draw();
 			ended = true;
+			endSound("bgm");
+			playSound("complete");
 		}
 
-		function playSound(name) {
+		function playSound(name, volume=1.0) 
+		{
 			var audio = document.getElementById(name);
+			audio.currentTime = 0;
+			audio.volume=volume
 			audio.play();
+		}
+
+		function endSound(name)
+		{
+			var audio = document.getElementById(name);
+			audio.pause();
+			audio.currentTime = 0;
 		}
 
 		// Listen on normal canvas, and transfer the event to hidden canvas
@@ -149,6 +164,11 @@
 		// If object is not yet shown, show it.
 		// Change to show the complete image when there object is clicked.
 		hidden_canvas.addEventListener("click", function(event) {
+				if (!bgm_play) {
+					playSound("bgm", 0.1);
+					bgm_play=true;
+				}
+
 				if (ended) {
 					if (end_counter <= 0) {
 						initialize();
@@ -167,7 +187,7 @@
     			// If transparency on the pixel , array = [0,0,0,0]
     			if((pixelData[0] == 0) && (pixelData[1] == 0) && (pixelData[2] == 0) && (pixelData[3] == 0)){
         			console.log("Did not click on ambystoma!");
-					playSound("misclick");
+					playSound("misclick", 0.6);
 				} else {
 					// Find closest ambystoma
 					var closest_ambystoma = null;
@@ -188,7 +208,6 @@
 						playSound("found");
 						// Check if game finishes
 						if (found_ambystoma.length == all_ambystoma.length) {
-							playSound("end");
 							end();
 						} else {
 							// Update display
