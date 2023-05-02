@@ -40,13 +40,14 @@ var ambystoma_positions = [[632, 471],
 var transparent_background = {image: new Image(), zIndex: 1, source: 'assets/transparent_background.jpg'};
 var solid_background = {image: new Image(), zIndex: 1, source: 'assets/background.jpg'};
 all_ambystoma = [];
+clickable_images = [];
 found_ambystoma = [];
 for (var i = 0; i < 25; i++) {
     all_ambystoma.push({image: new Image(), zIndex: 2, source: `assets/ambystoma${i+1}.png`, x: ambystoma_positions[i][0], y: ambystoma_positions[i][1]});
 }
+clickable_images.push(...all_ambystoma);
 
-all_objects = [transparent_background, solid_background];
-all_objects = all_objects.concat(all_ambystoma);
+all_objects = [transparent_background, solid_background, ...clickable_images];
 
 // Initialize objects' sources
 for (var i = 0; i < all_objects.length; i++) {
@@ -106,19 +107,37 @@ function end() {
     playSound("complete");
 }
 
-function playSound(name, volume=1.0) 
-{
+function playSound(name, volume=1.0) {
     var audio = document.getElementById(name);
     audio.currentTime = 0;
     audio.volume=volume
     audio.play();
 }
 
-function endSound(name)
-{
+function endSound(name) {
     var audio = document.getElementById(name);
     audio.pause();
     audio.currentTime = 0;
+}
+
+function ambystomaOnClickListener(ambystoma) {
+    // Clicking on an ambystoma
+    if (!found_ambystoma.includes(closest_ambystoma)) {
+        found_ambystoma.push(closest_ambystoma);
+        objectsToDraw.push(closest_ambystoma);
+        console.log("Found ambystoma!")
+        playSound("found");
+        // Check if game finishes
+        if (found_ambystoma.length == all_ambystoma.length) {
+            end();
+        } else {
+            // Update display
+            draw();
+        }
+    } else {
+        console.log("Found but duplicate!")
+        playSound("duplicate");
+    }
 }
 
 // Listen on normal canvas, and transfer the event to hidden canvas
@@ -168,33 +187,22 @@ hidden_canvas.addEventListener("click", function(event) {
             console.log("Did not click on ambystoma!");
             playSound("misclick", 0.6);
         } else {
-            // Find closest ambystoma
-            var closest_ambystoma = null;
+            // Find closest image
+            var closest_image = null;
             var min_dist = Number.MAX_SAFE_INTEGER;
-            for (var i in all_ambystoma) {
-                var ax = all_ambystoma[i].x;
-                var ay = all_ambystoma[i].y;
+            for (var i in clickable_images) {
+                var ax = clickable_images[i].x;
+                var ay = clickable_images[i].y;
                 var dist = compute_dist(x,y,ax,ay);
                 if (dist < min_dist) {
-                    closest_ambystoma = all_ambystoma[i];
+                    closest_image = clickable_images[i];
                     min_dist = dist;
                 }
             }
-            if (!found_ambystoma.includes(closest_ambystoma)) {
-                found_ambystoma.push(closest_ambystoma);
-                objectsToDraw.push(closest_ambystoma);
-                console.log("Found ambystoma!")
-                playSound("found");
-                // Check if game finishes
-                if (found_ambystoma.length == all_ambystoma.length) {
-                    end();
-                } else {
-                    // Update display
-                    draw();
-                }
-            } else {
-                console.log("Found but duplicate!")
-                playSound("duplicate");
+            assert(closest_image !== null);
+            // determine the type of the found image and call corresponding listener
+            if (all_ambystoma.includes(closest_ambystoma) ) {
+                ambystomaOnClickListener(closest_ambystoma);
             }
         }
     }
