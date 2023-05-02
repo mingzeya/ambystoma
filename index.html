@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html>
+<audio id="found"><source src="sounds/found.wav" type="audio/mpeg"></audio>
+<audio id="duplicate"><source src="sounds/duplicate.wav" type="audio/mpeg"></audio>
+<audio id="misclick"><source src="sounds/misclick.wav" type="audio/mpeg"></audio>
+
 <head>
 	<title>Find all Ambystoma! </title>
 	<style>
@@ -117,6 +121,11 @@
 			ended = true;
 		}
 
+		function playSound(name) {
+			var audio = document.getElementById(name);
+			audio.play();
+		}
+
 		// Listen on normal canvas, and transfer the event to hidden canvas
 		canvas.addEventListener("click", function(event) {
 				var x = event.offsetX;
@@ -157,6 +166,7 @@
     			// If transparency on the pixel , array = [0,0,0,0]
     			if((pixelData[0] == 0) && (pixelData[1] == 0) && (pixelData[2] == 0) && (pixelData[3] == 0)){
         			console.log("Did not click on ambystoma!");
+					playSound("misclick");
 				} else {
 					// Find closest ambystoma
 					var closest_ambystoma = null;
@@ -174,6 +184,7 @@
 						found_ambystoma.push(closest_ambystoma);
 						objectsToDraw.push(closest_ambystoma);
 						console.log("Found ambystoma!")
+						playSound("found");
 						// Check if game finishes
 						if (found_ambystoma.length == all_ambystoma.length) {
 							end();
@@ -183,6 +194,7 @@
 						}
 					} else {
 						console.log("Found but duplicate!")
+						playSound("duplicate");
 					}
 				}
 			}
