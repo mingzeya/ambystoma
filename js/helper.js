@@ -23,7 +23,6 @@ export function endSound(audios) {
     }
 }
 
-
 // Other simple helpers
 // Note this is not distance, this is square of distance, but still works for relative distance comparison
 export function compute_dist(x,y,ax,ay) {
