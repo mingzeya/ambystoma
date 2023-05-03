@@ -27,18 +27,24 @@ var ambystoma_positions = [[587, 467],
 
 // Define image objects
 var all_objects = []; // Only for initialization
-var all_ambystoma = []; // all the ambystoma
+var all_clickable_objects = [];
 var found_ambystoma = []; // found ambystoma
+var unfound_ambystoma = []; // unfound ambystoma
 var objectsToDraw = []; // all objects to draw
 
 var transparent_background = {image: new Image(), zIndex: 1, source: 'assets/transparent_background.jpg'};
 var solid_background = {image: new Image(), zIndex: 1, source: 'assets/background.jpg'};
+var all_ambystoma = []; // all the ambystoma
 for (var i = 0; i < 25; i++) {
     all_ambystoma.push({image: new Image(), zIndex: 2, source: `assets/ambystoma${i+1}.png`, x: ambystoma_positions[i][0], y: ambystoma_positions[i][1]});
 }
 
-all_objects = [transparent_background, solid_background];
-all_objects = all_objects.concat(all_ambystoma);
+unfound_ambystoma = all_ambystoma;
+all_clickable_objects = all_clickable_objects.concat(found_ambystoma);
+all_clickable_objects = all_clickable_objects.concat(unfound_ambystoma);
+
+all_objects = [transparent_background, solid_background]; // unclickable objects
+all_objects = all_objects.concat(all_clickable_objects); // all objects
 objectsToDraw = [transparent_background];
 
 // Initialize image objects' sources
@@ -72,6 +78,7 @@ function draw() {
 // Initialize game
 function initialize() {
     found_ambystoma = [];
+    unfound_ambystoma = all_ambystoma;
     objectsToDraw = [transparent_background];
     if (ended) {
         ended = false;
@@ -116,6 +123,27 @@ canvas.addEventListener("click", function(event) {
     }
 )
 
+// Define click events for different groups of objects
+function click_on_unfound_ambystoma(ambystoma) {
+    console.log("Found ambystoma!")
+
+    // Update arrays
+    found_ambystoma.push(ambystoma);
+    unfound_ambystoma = unfound_ambystoma.filter(function(el) { return el != ambystoma; });
+    objectsToDraw.push(ambystoma);
+    // Play sound
+    helper.playSound(found_audio_group);
+    // Check if game finishes
+    if (found_ambystoma.length == all_ambystoma.length) {
+        end();
+    }
+}
+
+function click_on_found_ambystoma(ambystoma) {
+    console.log("Found but duplicate!")
+    helper.playSound(duplicate_audio_group);
+}
+
 // Check if the clicked pixel is transparent. 
 // If actually clicked on object, check which object it is
 // Trigger corresponding event from objects
@@ -146,30 +174,29 @@ hidden_canvas.addEventListener("click", function(event) {
         helper.playSound(misclick_audio_group);
     } else {
         // Find closest clicked ambystoma
-        var closest_ambystoma = null;
+        var clicked_object = null;
         var min_dist = Number.MAX_SAFE_INTEGER;
-        for (var i in all_ambystoma) {
-            var ax = all_ambystoma[i].x;
-            var ay = all_ambystoma[i].y;
+        for (var i in all_clickable_objects) {
+            var ax = all_clickable_objects[i].x;
+            var ay = all_clickable_objects[i].y;
             var dist = helper.compute_dist(x,y,ax,ay);
             if (dist < min_dist) {
-                closest_ambystoma = all_ambystoma[i];
+                clicked_object = all_clickable_objects[i];
                 min_dist = dist;
             }
         }
-        if (!found_ambystoma.includes(closest_ambystoma)) {
-            console.log("Found ambystoma!")
-            found_ambystoma.push(closest_ambystoma);
-            objectsToDraw.push(closest_ambystoma);
-            helper.playSound(found_audio_group);
-            // Check if game finishes
-            if (found_ambystoma.length == all_ambystoma.length) {
-                end();
-            }
-            draw();
+
+        // Trigger event for different object types
+        // TODO: Consider to change this to a map instead of finding in arrays
+        if (unfound_ambystoma.includes(clicked_object)) {
+            click_on_unfound_ambystoma(clicked_object);
+        } else if (found_ambystoma.includes(clicked_object)) {
+            click_on_found_ambystoma(clicked_object);
         } else {
-            console.log("Found but duplicate!")
-            helper.playSound(duplicate_audio_group);
+            console.log("Error: unknown clicked object!")
         }
+
+        // Finally, update the display
+        draw();
     }
 })
