@@ -47,8 +47,18 @@ var cat_object = new helper.image_object(`assets/cat.png`, 1,
 var hythlodaeus_object = new helper.image_object(`assets/hythlodaeus.png`, 1, 
     115, 1138,
     "", click_on_hythlodaeus);
+var hythlodaeus_small_object = new helper.image_object(`assets/hythlodaeus_small.png`, 1, 
+    925, 931,
+    "", click_on_hythlodaeus);
+var zenos_object = new helper.image_object(`assets/zenos_big.png`, 1, 
+    269, 1170,
+    "", click_on_zenos);
+var zenos_small_object = new helper.image_object(`assets/zenos_small.png`, 1, 
+    1038, 783,
+    "", click_on_zenos);    
 
-all_clickable_objects = [cat_object, hythlodaeus_object];
+all_clickable_objects = [cat_object, hythlodaeus_object, hythlodaeus_small_object,
+zenos_object, zenos_small_object];
 all_clickable_objects = all_clickable_objects.concat(all_ambystoma);
 objectsToDraw = [transparent_background];
 
@@ -67,7 +77,13 @@ var complete_audio_group = [complete_audio];
 var cat_audio = document.getElementById("cat_audio");
 var cat_audio_group = [cat_audio];
 var hythlodaeus_audio = document.getElementById("hythlodaeus_audio");
-var hythlodaeus_audio_group = [hythlodaeus_audio];
+var hythlodaeus_audio2 = document.getElementById("hythlodaeus_audio2");
+var hythlodaeus_audio3 = document.getElementById("hythlodaeus_audio3");
+var hythlodaeus_audio4 = document.getElementById("hythlodaeus_audio4");
+var hythlodaeus_audio_group = [hythlodaeus_audio, hythlodaeus_audio2,
+hythlodaeus_audio3, hythlodaeus_audio4];
+var zenos_audio = document.getElementById("zenos_audio");
+var zenos_audio_group = [zenos_audio];
 
 // Typical draw
 function draw() {
@@ -157,6 +173,16 @@ function click_on_cat(clicked) {
 function click_on_hythlodaeus(clicked) {
     console.log("Click on Hythlodaeus!");
     helper.playSound(hythlodaeus_audio_group);
+}
+
+function click_on_hythlodaeus_small(clicked) {
+    console.log("Click on Hythlodaeus_small!");
+    helper.playSound(hythlodaeus_audio_group);
+}
+
+function click_on_zenos(clicked) {
+    console.log("Click on Zenos!");
+    helper.playSound(zenos_audio_group);
 }
 
 // Check if the clicked pixel is transparent. 
