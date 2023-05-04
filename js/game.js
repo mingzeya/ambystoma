@@ -194,26 +194,27 @@ function click_on_found_ambystoma(clicked) {
 
 function click_on_cat(clicked) {
     console.log("Click on cat!");
+    objectsToDraw.push(clicked);
     helper.playSound(cat_audio_group);
 }
 
 function click_on_dog(clicked) {
     console.log("Click on dog!");
+    objectsToDraw.push(clicked);
     play_next_bgm();
 }
 
 function click_on_hythlodaeus(clicked) {
     console.log("Click on Hythlodaeus!");
-    helper.playSound(hythlodaeus_audio_group);
-}
-
-function click_on_hythlodaeus_small(clicked) {
-    console.log("Click on Hythlodaeus_small!");
+    objectsToDraw.push(clicked);
+    helper.endSound(zenos_audio_group);
     helper.playSound(hythlodaeus_audio_group);
 }
 
 function click_on_zenos(clicked) {
     console.log("Click on Zenos!");
+    objectsToDraw.push(clicked);
+    helper.endSound(hythlodaeus_audio_group);
     helper.playSound(zenos_audio_group);
 }
 
