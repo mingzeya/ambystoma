@@ -37,8 +37,10 @@ export function playSound(audios) {
 
 export function endSound(audios) {
     for (var i in audios) {
-        audios[i].pause();
-        audios[i].currentTime = 0
+        if (!audios.paused) {
+            audios[i].pause();
+            audios[i].currentTime = 0
+        }
     }
 }
 
