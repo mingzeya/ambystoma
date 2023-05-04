@@ -118,7 +118,6 @@ function reInitialize() {
     end_counter = END_COUNT;
     bgm_index = -1;
     helper.endSound(complete_audio_group);
-    helper.playSound(bgm_audio_group);
     draw();
 }
 
