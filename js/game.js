@@ -41,7 +41,14 @@ for (var i = 0; i < 25; i++) {
             AMBYSTOMA_TAG, click_on_unfound_ambystoma)
     );
 }
+var cat_object = new helper.image_object(`assets/cat.png`, 1, 
+    776, 627,
+    "", click_on_cat);
+var hythlodaeus_object = new helper.image_object(`assets/hythlodaeus.png`, 1, 
+    115, 1138,
+    "", click_on_hythlodaeus);
 
+all_clickable_objects = [cat_object, hythlodaeus_object];
 all_clickable_objects = all_clickable_objects.concat(all_ambystoma);
 objectsToDraw = [transparent_background];
 
@@ -57,6 +64,10 @@ var duplicate_audio = document.getElementById("duplicate_audio");
 var duplicate_audio_group = [duplicate_audio];
 var complete_audio = document.getElementById("complete_audio");
 var complete_audio_group = [complete_audio];
+var cat_audio = document.getElementById("cat_audio");
+var cat_audio_group = [cat_audio];
+var hythlodaeus_audio = document.getElementById("hythlodaeus_audio");
+var hythlodaeus_audio_group = [hythlodaeus_audio];
 
 // Typical draw
 function draw() {
@@ -96,7 +107,7 @@ function end() {
 document.addEventListener('readystatechange', function() {
     draw();
     // Hidden layer will only be called once
-    helper.draw_objects(all_ambystoma, hidden_ctx);
+    helper.draw_objects(all_clickable_objects, hidden_ctx);
 }, false);
 
 // Listen on normal canvas, and transfer the event to hidden canvas
@@ -133,9 +144,19 @@ function click_on_unfound_ambystoma(ambystoma) {
     }
 }
 
-function click_on_found_ambystoma(ambystoma) {
+function click_on_found_ambystoma(clicked) {
     console.log("Found but duplicate!")
     helper.playSound(duplicate_audio_group);
+}
+
+function click_on_cat(clicked) {
+    console.log("Click on cat!")
+    helper.playSound(cat_audio_group);
+}
+
+function click_on_hythlodaeus(clicked) {
+    console.log("Click on Hythlodaeus!");
+    helper.playSound(hythlodaeus_audio_group);
 }
 
 // Check if the clicked pixel is transparent. 
