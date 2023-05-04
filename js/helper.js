@@ -1,6 +1,8 @@
+function empty_func(blah) { return undefined; }
+
 // Define image object class
 export class image_object {
-    constructor(source, zIndex, pos_x = 0, pos_y = 0, tag = "", click_func = null) {
+    constructor(source, zIndex, pos_x = 0, pos_y = 0, click_func = empty_func) {
         // Construct image object within
         this.image = new Image();
         this.image.src = source;
@@ -10,10 +12,16 @@ export class image_object {
         // optional position for click position
         this.pos_x = pos_x;
         this.pos_y = pos_y;
-        // tag
-        this.tag = tag;
         // click function
         this.click_func = click_func;
+        this.click_func_initial = click_func;
+        // TODO: Refactor to remove this flag. Always use click_func
+        this.rendered = false;
+    }
+
+    reset() {
+        this.click_func = this.click_func_initial;
+        this.rendered = false;
     }
 }
 

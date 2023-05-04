@@ -35,32 +35,31 @@ var objectsToDraw = []; // all objects to draw
 var transparent_background = new helper.image_object('assets/transparent_background.jpg', 1);
 var solid_background = new helper.image_object('assets/background.jpg', 1);
 var all_ambystoma = []; // all the ambystoma
-var AMBYSTOMA_TAG = "ambystoma";
 for (var i = 0; i < 25; i++) {
     all_ambystoma.push(
         new helper.image_object(`assets/ambystoma${i+1}.png`, 1, 
             ambystoma_positions[i][0], ambystoma_positions[i][1],
-            AMBYSTOMA_TAG, click_on_unfound_ambystoma)
+            click_on_unfound_ambystoma)
     );
 }
 var cat_object = new helper.image_object(`assets/cat.png`, 1, 
     776, 627,
-    "", click_on_cat);
+    click_on_cat);
 var dog_object = new helper.image_object(`assets/dog.png`, 1,
     962, 775,
-    "", click_on_dog);
+    click_on_dog);
 var hythlodaeus_object = new helper.image_object(`assets/hythlodaeus.png`, 1, 
     115, 1138,
-    "", click_on_hythlodaeus);
+    click_on_hythlodaeus);
 var hythlodaeus_small_object = new helper.image_object(`assets/hythlodaeus_small.png`, 1, 
     925, 931,
-    "", click_on_hythlodaeus);
+    click_on_hythlodaeus);
 var zenos_object = new helper.image_object(`assets/zenos_big.png`, 1, 
     269, 1170,
-    "", click_on_zenos);
+    click_on_zenos);
 var zenos_small_object = new helper.image_object(`assets/zenos_small.png`, 1, 
     1038, 783,
-    "", click_on_zenos);    
+    click_on_zenos);    
 
 all_clickable_objects = [cat_object, dog_object,
     hythlodaeus_object, hythlodaeus_small_object,
@@ -108,10 +107,9 @@ function draw() {
 // reInitialize game
 function reInitialize() {
     found_ambystoma = [];
+    // Reset click function
     for (var i in all_clickable_objects) {
-        if (all_clickable_objects[i].tag == AMBYSTOMA_TAG) {
-            all_clickable_objects[i].click_func = click_on_unfound_ambystoma;
-        }
+        all_clickable_objects[i].reset();
     }
 
     objectsToDraw = [transparent_background];
@@ -195,26 +193,42 @@ function click_on_found_ambystoma(clicked) {
 
 function click_on_cat(clicked) {
     console.log("Click on cat!");
-    objectsToDraw.push(clicked);
+    if (!clicked.rendered) {
+        objectsToDraw.push(clicked);
+        clicked.rendered = true;
+    }
+    // Play audio
     helper.playSound(cat_audio_group);
 }
 
 function click_on_dog(clicked) {
     console.log("Click on dog!");
-    objectsToDraw.push(clicked);
+    if (!clicked.rendered) {
+        objectsToDraw.push(clicked);
+        clicked.rendered = true;
+    }
+    // Play audio
     play_next_bgm();
 }
 
 function click_on_hythlodaeus(clicked) {
     console.log("Click on Hythlodaeus!");
-    objectsToDraw.push(clicked);
+    if (!clicked.rendered) {
+        objectsToDraw.push(clicked);
+        clicked.rendered = true;
+    }
+    // Play audio
     helper.endSound(zenos_audio_group);
     helper.playSound(hythlodaeus_audio_group);
 }
 
 function click_on_zenos(clicked) {
     console.log("Click on Zenos!");
-    objectsToDraw.push(clicked);
+    if (!clicked.rendered) {
+        objectsToDraw.push(clicked);
+        clicked.rendered = true;
+    }
+    // Play audio
     helper.endSound(hythlodaeus_audio_group);
     helper.playSound(zenos_audio_group);
 }
