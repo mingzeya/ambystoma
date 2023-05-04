@@ -1,3 +1,22 @@
+// Define image object class
+export class image_object {
+    constructor(source, zIndex, pos_x = 0, pos_y = 0, tag = "", click_func = null) {
+        // Construct image object within
+        this.image = new Image();
+        this.image.src = source;
+        this.image.crossOrigin = "anonymous";
+        // zIndex for drawing order
+        this.zIndex = zIndex;
+        // optional position for click position
+        this.pos_x = pos_x;
+        this.pos_y = pos_y;
+        // tag
+        this.tag = tag;
+        // click function
+        this.click_func = click_func;
+    }
+}
+
 // Function to draw objects with different layers
 export function draw_objects(objectsToDraw, ctx) {
     objectsToDraw.sort(function(a, b) {

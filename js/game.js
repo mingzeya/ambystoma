@@ -26,32 +26,24 @@ var ambystoma_positions = [[587, 467],
 
 
 // Define image objects
-var all_objects = []; // Only for initialization
 var all_clickable_objects = [];
 var found_ambystoma = []; // found ambystoma
-var unfound_ambystoma = []; // unfound ambystoma
 var objectsToDraw = []; // all objects to draw
 
-var transparent_background = {image: new Image(), zIndex: 1, source: 'assets/transparent_background.jpg'};
-var solid_background = {image: new Image(), zIndex: 1, source: 'assets/background.jpg'};
+var transparent_background = new helper.image_object('assets/transparent_background.jpg', 1);
+var solid_background = new helper.image_object('assets/background.jpg', 1);
 var all_ambystoma = []; // all the ambystoma
+var AMBYSTOMA_TAG = "ambystoma";
 for (var i = 0; i < 25; i++) {
-    all_ambystoma.push({image: new Image(), zIndex: 2, source: `assets/ambystoma${i+1}.png`, x: ambystoma_positions[i][0], y: ambystoma_positions[i][1]});
+    all_ambystoma.push(
+        new helper.image_object(`assets/ambystoma${i+1}.png`, 1, 
+            ambystoma_positions[i][0], ambystoma_positions[i][1],
+            AMBYSTOMA_TAG, click_on_unfound_ambystoma)
+    );
 }
 
-unfound_ambystoma = all_ambystoma;
-all_clickable_objects = all_clickable_objects.concat(found_ambystoma);
-all_clickable_objects = all_clickable_objects.concat(unfound_ambystoma);
-
-all_objects = [transparent_background, solid_background]; // unclickable objects
-all_objects = all_objects.concat(all_clickable_objects); // all objects
+all_clickable_objects = all_clickable_objects.concat(all_ambystoma);
 objectsToDraw = [transparent_background];
-
-// Initialize image objects' sources
-for (var i = 0; i < all_objects.length; i++) {
-    all_objects[i].image.src = all_objects[i].source;
-    all_objects[i].image.crossOrigin = "anonymous";
-}
 
 // Define audio objects
 var bgm_audio = document.getElementById("bgm_audio");
@@ -75,17 +67,21 @@ function draw() {
     ctx.fillText(found_ambystoma.length+"/25", 60, 110);
 }
 
-// Initialize game
-function initialize() {
+// reInitialize game
+function reInitialize() {
     found_ambystoma = [];
-    unfound_ambystoma = all_ambystoma;
-    objectsToDraw = [transparent_background];
-    if (ended) {
-        ended = false;
-        end_counter = END_COUNT;
-        helper.playSound(bgm_audio_group);
-        draw();
+    for (var i in all_clickable_objects) {
+        if (all_clickable_objects[i].tag == AMBYSTOMA_TAG) {
+            all_clickable_objects[i].click_func = click_on_unfound_ambystoma;
+        }
     }
+
+    objectsToDraw = [transparent_background];
+    ended = false;
+    end_counter = END_COUNT;
+    helper.endSound(complete_audio_group);
+    helper.playSound(bgm_audio_group);
+    draw();
 }
 
 // End game
@@ -95,9 +91,6 @@ function end() {
     helper.playSound(complete_audio_group);
     objectsToDraw = [solid_background];
 }
-
-// Initialize is called at first
-initialize();
 
 // Initial draw. This will be called after the images are loaded.
 document.addEventListener('readystatechange', function() {
@@ -129,8 +122,9 @@ function click_on_unfound_ambystoma(ambystoma) {
 
     // Update arrays
     found_ambystoma.push(ambystoma);
-    unfound_ambystoma = unfound_ambystoma.filter(function(el) { return el != ambystoma; });
     objectsToDraw.push(ambystoma);
+    // Update click function
+    ambystoma.click_func = click_on_found_ambystoma;
     // Play sound
     helper.playSound(found_audio_group);
     // Check if game finishes
@@ -155,7 +149,7 @@ hidden_canvas.addEventListener("click", function(event) {
 
     if (ended) {
         if (end_counter <= 0) {
-            initialize();
+            reInitialize();
         } else {
             end_counter -= 1;
         }
@@ -177,24 +171,15 @@ hidden_canvas.addEventListener("click", function(event) {
         var clicked_object = null;
         var min_dist = Number.MAX_SAFE_INTEGER;
         for (var i in all_clickable_objects) {
-            var ax = all_clickable_objects[i].x;
-            var ay = all_clickable_objects[i].y;
-            var dist = helper.compute_dist(x,y,ax,ay);
+            var dist = helper.compute_dist(x,y,all_clickable_objects[i].pos_x,all_clickable_objects[i].pos_y);
             if (dist < min_dist) {
                 clicked_object = all_clickable_objects[i];
                 min_dist = dist;
             }
         }
 
-        // Trigger event for different object types
-        // TODO: Consider to change this to a map instead of finding in arrays
-        if (unfound_ambystoma.includes(clicked_object)) {
-            click_on_unfound_ambystoma(clicked_object);
-        } else if (found_ambystoma.includes(clicked_object)) {
-            click_on_found_ambystoma(clicked_object);
-        } else {
-            console.log("Error: unknown clicked object!")
-        }
+        // Trigger event for clickable object
+        clicked_object.click_func(clicked_object);
 
         // Finally, update the display
         draw();
