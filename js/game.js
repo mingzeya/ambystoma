@@ -12,8 +12,9 @@ var ended = false;
 var END_COUNT = 3;
 var end_counter = END_COUNT; // To prevent game reset immediately, define a click counter of reset
 
-// Initialize the bgm play for the very first click because Chrome doesn't allow play audio on load
-var bgm_play = false;
+// Define which bgm to play
+var bgm_index = -1;
+
 var ambystoma_positions = [[587, 467],
     [515, 732], [811, 1035], [513, 1067],
     [1016,357], [935, 426], [1152, 410],
@@ -44,6 +45,9 @@ for (var i = 0; i < 25; i++) {
 var cat_object = new helper.image_object(`assets/cat.png`, 1, 
     776, 627,
     "", click_on_cat);
+var dog_object = new helper.image_object(`assets/dog.png`, 1,
+    962, 775,
+    "", click_on_dog);
 var hythlodaeus_object = new helper.image_object(`assets/hythlodaeus.png`, 1, 
     115, 1138,
     "", click_on_hythlodaeus);
@@ -57,15 +61,21 @@ var zenos_small_object = new helper.image_object(`assets/zenos_small.png`, 1,
     1038, 783,
     "", click_on_zenos);    
 
-all_clickable_objects = [cat_object, hythlodaeus_object, hythlodaeus_small_object,
-zenos_object, zenos_small_object];
+all_clickable_objects = [cat_object, dog_object,
+    hythlodaeus_object, hythlodaeus_small_object,
+    zenos_object, zenos_small_object];
 all_clickable_objects = all_clickable_objects.concat(all_ambystoma);
 objectsToDraw = [transparent_background];
 
 // Define audio objects
 var bgm_audio = document.getElementById("bgm_audio");
-bgm_audio.volume = 0.1;
+bgm_audio.volume = 0.05;
 var bgm_audio_group = [bgm_audio];
+var bgm_audio_2 = document.getElementById("bgm_audio_2");
+bgm_audio_2.volume = 0.05;
+var bgm_audio_group_2 = [bgm_audio_2]
+var bgm_audio_groups = [bgm_audio_group, bgm_audio_group_2];
+
 var found_audio = document.getElementById("found_audio");
 var found_audio_group = [found_audio];
 var misclick_audio = document.getElementById("misclick_audio");
@@ -106,6 +116,7 @@ function reInitialize() {
     objectsToDraw = [transparent_background];
     ended = false;
     end_counter = END_COUNT;
+    bgm_index = -1;
     helper.endSound(complete_audio_group);
     helper.playSound(bgm_audio_group);
     draw();
@@ -114,9 +125,26 @@ function reInitialize() {
 // End game
 function end() {
     ended = true;
-    helper.endSound(bgm_audio_group);
+    end_current_bgm();
     helper.playSound(complete_audio_group);
     objectsToDraw = [solid_background];
+}
+
+// End current bgm
+function end_current_bgm() {
+    if (bgm_index != -1) {
+        helper.endSound(bgm_audio_groups[bgm_index]);
+    }
+}
+
+// Play next bgm
+function play_next_bgm() {
+    end_current_bgm();
+    bgm_index = (bgm_index + 2)%(bgm_audio_groups.length + 1) - 1;
+    console.log("bgm_index: " + bgm_index);
+    if (bgm_index != -1) {
+        helper.playSound(bgm_audio_groups[bgm_index]);
+    }
 }
 
 // Initial draw. This will be called after the images are loaded.
@@ -161,13 +189,18 @@ function click_on_unfound_ambystoma(ambystoma) {
 }
 
 function click_on_found_ambystoma(clicked) {
-    console.log("Found but duplicate!")
+    console.log("Found but duplicate!");
     helper.playSound(duplicate_audio_group);
 }
 
 function click_on_cat(clicked) {
-    console.log("Click on cat!")
+    console.log("Click on cat!");
     helper.playSound(cat_audio_group);
+}
+
+function click_on_dog(clicked) {
+    console.log("Click on dog!");
+    play_next_bgm();
 }
 
 function click_on_hythlodaeus(clicked) {
@@ -189,11 +222,6 @@ function click_on_zenos(clicked) {
 // If actually clicked on object, check which object it is
 // Trigger corresponding event from objects
 hidden_canvas.addEventListener("click", function(event) {
-    if (!bgm_play) {
-        helper.playSound(bgm_audio_group);
-        bgm_play=true;
-    }
-
     if (ended) {
         if (end_counter <= 0) {
             reInitialize();
