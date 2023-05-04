@@ -246,8 +246,17 @@ hidden_canvas.addEventListener("click", function(event) {
         return;
     }
 
-    var x = event.offsetX;
-    var y = event.offsetY;
+    var x = 0;
+    var y = 0;
+    if (!event.offsetX) {
+        // For FireFox
+        x = event.pageX - hidden_canvas.offsetLeft;
+        y = event.pageY - hidden_canvas.offsetHeight;
+    } else {
+        // For Chrome
+        x = event.offsetX;
+        y = event.offsetY;
+    }
     
     var pixelData = hidden_ctx.getImageData(x, y, 1, 1).data;
     console.log(x,y); 
