@@ -206,3 +206,6 @@ hidden_canvas.addEventListener("click", function(event) {
         draw();
     }
 })
+
+// Remove spinner
+document.getElementById("spinner").remove();

@@ -10,6 +10,7 @@
 
 
 <head>
+	<link rel="stylesheet" href="css/spinner.css">
 	<title>Find all Ambystoma! </title>
 	<style>
 		canvas {
@@ -19,8 +20,10 @@
 </head>
 <body>
 	<meta charset="UTF-8">
+	<div id="spinner" class="lds-circle"><div></div></div></div>
 	<canvas id="game-canvas" width="1425" height="1280", style="position:absolute; top:0px; left:0px"></canvas>
 	<canvas hidden="hidden" id="hidden-canvas" width="1425" height="1280", style="position:absolute; top:0px; left:0px"></canvas>
 	<script type="module" src="js/game.js"></script>
+	<script type="module" src="js/helper.js"></script>
 </body>
 </html>
