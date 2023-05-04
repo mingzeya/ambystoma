@@ -15,6 +15,7 @@ var end_counter = END_COUNT; // To prevent game reset immediately, define a clic
 // Define which bgm to play
 var bgm_index = -1;
 
+// Define ambystoma positions
 var ambystoma_positions = [[587, 467],
     [515, 732], [811, 1035], [513, 1067],
     [1016,357], [935, 426], [1152, 410],
